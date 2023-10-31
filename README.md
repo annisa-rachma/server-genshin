@@ -34,7 +34,7 @@ _Response (200 - OK)_
 
 &nbsp;
 
-## 1. GET /characters/:id
+## 2. GET /characters/:id
 
 Description:
 
