@@ -9,7 +9,8 @@ const port = 3000;
 const { EnkaClient, TextAssets, DynamicTextAssets, ImageAssets,} = require("enka-network-api");
 const enka = new EnkaClient();
 
-const cors = require ('cors')
+const cors = require ('cors');
+const { createSlug } = require('./helper/slug');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -19,23 +20,18 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+
 app.get('/characters', async(req, res) => {
   try {
     let characters = await enka.getAllCharacters().map((character, index) => {
-      return character 
-      // = {
-      //   id : index+1,
-      //   name : character.name.get(),
-      //   rarity : character.stars,
-      //   charImage : character.icon.url,
-      //   vision : new TextAssets(character.details.vision.id, enka).toString(),
-      // }
+      return  {
+        id : createSlug(character.name.get("en")),
+        name : character.name.get("en"),
+        rarity : character.stars,
+        charImage : character.icon.url,
+        vision : new TextAssets(character.details.vision.id, enka).toString(),
+      }
     })
-
-//     const characters = enka.getAllCharacters();
-// // print character names in language "en"
-// console.log(characters.map(c => c.name.get("en")));
-    console.log(characters);
     
     res.status(200).json(characters)
   } catch (error) {
@@ -43,6 +39,7 @@ app.get('/characters', async(req, res) => {
     res.status(500).json({message : 'Internal Server Error'})
   }
 })
+
 
 app.get('/characters/:id', async(req, res) => {
   try {
