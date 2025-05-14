@@ -6,8 +6,10 @@ const app = express()
 // const port = process.env.PORT || 3000;
 const port = 3000;
 
-const { EnkaClient, TextAssets, DynamicTextAssets, ImageAssets,} = require("enka-network-api");
-const enka = new EnkaClient();
+const { EnkaClient, TextAssets, DynamicTextAssets, ImageAssets, NormalAttack, Skill,} = require("enka-network-api");
+const enka = new EnkaClient({ showFetchCacheLog: true }); // showFetchCacheLog is true by default
+
+// enka.cachedAssetsManager.fetchAllContents(); // returns promise
 
 const cors = require ('cors');
 const { createSlug } = require('./helper/slug');
@@ -23,7 +25,7 @@ app.get('/', (req, res) => {
 
 app.get('/characters', async(req, res) => {
   try {
-    let characters = await enka.getAllCharacters().map((character, index) => {
+    let characters = await enka.getAllCharacters().map((character) => {
       return  {
         id : createSlug(character.name.get("en")),
         name : character.name.get("en"),
@@ -43,10 +45,10 @@ app.get('/characters', async(req, res) => {
 
 app.get('/characters/:id', async(req, res) => {
   try {
-    let characters = await enka.getAllCharacters().map((character, index) => {
+    let characters = await enka.getAllCharacters().map((character) => {
       return character = {
-        id : index+1,
-        name : character.name.get(),
+        id : createSlug(character.name.get("en")),
+        name : character.name.get("en"),
         rarity : character.stars,
         splashImage : character.splashImage.url,
         charImage : character.icon.url,
@@ -57,35 +59,40 @@ app.get('/characters/:id', async(req, res) => {
         constellationIcon : new ImageAssets(character.details.constellationIcon.name, enka).url,
         title : new TextAssets(character.details.title.id, enka).toString(),
         charDescription : new TextAssets(character.details.description.id, enka).toString(),
-        normalAttack : {
-          name : new TextAssets(character.normalAttack.name.id, enka).toString(),
-          description : new DynamicTextAssets(character.normalAttack.description.id, character.normalAttack.description , enka).getReplacedData().text.replace(/<[^>]+>/g, ""),
+        name : new TextAssets(character.normalAttack.name.id, enka).toString(),
+        // description : new DynamicTextAssets(character.normalAttack.description.id, character.normalAttack.description , enka).getReplacedData().text.replace(/<[^>]+>/g, ""),
           icon : new ImageAssets(character.normalAttack.icon.name, enka).url
-        },
-        elementalSkill : {
-          name : new TextAssets(character.elementalSkill.name.id, enka).toString(),
-          description : new DynamicTextAssets(character.elementalSkill.description.id, character.elementalSkill.description , enka).getReplacedData().text.replace(/<[^>]+>/g, ""),
-          icon : new ImageAssets(character.elementalSkill.icon.name, enka).url,
-          cooldown : character.elementalSkill.cooldown,
-          maxCharge : character.elementalSkill.maxCharge
-        },
-        elementalBurst : {
-          name : new TextAssets(character.elementalBurst.name.id, enka).toString(),
-          description : new DynamicTextAssets(character.elementalBurst.description.id, character.elementalBurst.description , enka).getReplacedData().text.replace(/<[^>]+>/g, ""),
-          icon : new ImageAssets(character.elementalBurst.icon.name, enka).url,
-          cooldown : character.elementalBurst.cooldown,
-          maxCharge : character.elementalBurst.maxCharge
-        }
+
+        // normalAttack : {
+        //   name : new TextAssets(character.normalAttack.name.id, enka).toString(),
+        //   description : new DynamicTextAssets(character.normalAttack.description.id, character.normalAttack.description , enka).getReplacedData().text.replace(/<[^>]+>/g, ""),
+        //   icon : new ImageAssets(character.normalAttack.icon.name, enka).url
+        // },
+        // elementalSkill : {
+        //   name : new TextAssets(character.elementalSkill.name.id, enka).toString(),
+        //   description : new DynamicTextAssets(character.elementalSkill.description.id, character.elementalSkill.description , enka).getReplacedData().text.replace(/<[^>]+>/g, ""),
+        //   icon : new ImageAssets(character.elementalSkill.icon.name, enka).url,
+        //   cooldown : character.elementalSkill.cooldown,
+        //   maxCharge : character.elementalSkill.maxCharge
+        // },
+        // elementalBurst : {
+        //   name : new TextAssets(character.elementalBurst.name.id, enka).toString(),
+        //   description : new DynamicTextAssets(character.elementalBurst.description.id, character.elementalBurst.description , enka).getReplacedData().text.replace(/<[^>]+>/g, ""),
+        //   icon : new ImageAssets(character.elementalBurst.icon.name, enka).url,
+        //   cooldown : character.elementalBurst.cooldown,
+        //   maxCharge : character.elementalBurst.maxCharge
+        // }
       }
     })
 
+    
     let characterById
     characters.forEach((char) => {
       if(char.id == req.params.id) {
         characterById = char
       }
     })
-
+    console.log(characterById.normalAttack)
     res.status(200).json(characterById)
   } catch (error) {
     console.log(error)
