@@ -1,9 +1,11 @@
-if(process.env.NODE_ENV !== "production") {
-  require('dotenv').config();
-}
+// if(process.env.NODE_ENV !== "production") {
+//   require('dotenv').config();
+// }
 const express = require('express')
 const app = express()
-const port = process.env.PORT || 3000;
+// const port = process.env.PORT || 3000;
+const port = 3000;
+
 const { EnkaClient, TextAssets, DynamicTextAssets, ImageAssets,} = require("enka-network-api");
 const enka = new EnkaClient();
 
@@ -20,15 +22,21 @@ app.get('/', (req, res) => {
 app.get('/characters', async(req, res) => {
   try {
     let characters = await enka.getAllCharacters().map((character, index) => {
-      return character = {
-        id : index+1,
-        name : character.name.get(),
-        rarity : character.stars,
-        charImage : character.icon.url,
-        vision : new TextAssets(character.details.vision.id, enka).toString(),
-      }
+      return character 
+      // = {
+      //   id : index+1,
+      //   name : character.name.get(),
+      //   rarity : character.stars,
+      //   charImage : character.icon.url,
+      //   vision : new TextAssets(character.details.vision.id, enka).toString(),
+      // }
     })
 
+//     const characters = enka.getAllCharacters();
+// // print character names in language "en"
+// console.log(characters.map(c => c.name.get("en")));
+    console.log(characters);
+    
     res.status(200).json(characters)
   } catch (error) {
     console.log(error)

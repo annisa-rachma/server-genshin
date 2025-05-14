@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "enka-network-api": "^4.1.1",
+    "enka-network-api": "^5.0.4",
     "express": "^4.18.2"
   }
 }
