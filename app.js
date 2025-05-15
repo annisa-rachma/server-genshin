@@ -11,8 +11,6 @@ const {
   TextAssets,
   DynamicTextAssets,
   ImageAssets,
-  NormalAttack,
-  Skill,
 } = require("enka-network-api");
 const enka = new EnkaClient({ showFetchCacheLog: true }); // showFetchCacheLog is true by default
 
@@ -53,90 +51,87 @@ app.get("/characters/:id", async (req, res) => {
 
     const allCharactersMap = await enka.getAllCharacters();
 
-    let character = allCharactersMap.find((character) => character.id == characterId);
+    let character = allCharactersMap.find(
+      (character) => character.id == characterId
+    );
 
-    let characterData
+    let characterData;
 
-    if(character) {
+    if (character) {
       const elementalSkill = character.elementalSkill
-          ? {
-              name: new TextAssets(
-                character.elementalSkill.name.id,
-                enka
-              ).toString(),
-              description: new DynamicTextAssets(
-                character.elementalSkill.description.id,
-                character.elementalSkill.description,
-                enka
-              ).toString(),
-              // .text.replace(/<[^>]+>/g, ""),
-              icon: new ImageAssets(character.elementalSkill.icon.name, enka)
-                .url,
-              cooldown: character.elementalSkill.cooldown,
-              maxCharge: character.elementalSkill.maxCharge,
-            }
-          : "";
-
-        const elementalBurst = character.elementalBurst
-          ? {
-              name: new TextAssets(
-                character.elementalBurst.name.id,
-                enka
-              ).toString(),
-              description: new DynamicTextAssets(
-                character.elementalBurst.description.id,
-                character.elementalBurst.description,
-                enka
-              ).toString(),
-              icon: new ImageAssets(character.elementalBurst.icon.name, enka)
-                .url,
-              cooldown: character.elementalBurst.cooldown,
-              maxCharge: character.elementalBurst.maxCharge,
-            }
-          : "";
-
-        let char = {
-          id: character.id,
-          name: character.name.get("en"),
-          rarity: character.stars,
-          splashImage: character.splashImage.url,
-          charImage: character.icon.url,
-          birthday: character.details.birthday,
-          location: new TextAssets(
-            character.details.location.id,
-            enka
-          ).toString(),
-          vision: new TextAssets(character.details.vision.id, enka).toString(),
-          constellation: new TextAssets(
-            character.details.constellation.id,
-            enka
-          ).toString(),
-          constellationIcon: new ImageAssets(
-            character.details.constellationIcon.name,
-            enka
-          ).url,
-          title: new TextAssets(character.details.title.id, enka).toString(),
-          charDescription: new TextAssets(
-            character.details.description.id,
-            enka
-          ).toString(),
-          normalAttack: {
+        ? {
             name: new TextAssets(
-              character.normalAttack.name.id,
+              character.elementalSkill.name.id,
               enka
             ).toString(),
             description: new DynamicTextAssets(
-              character.normalAttack.description.id,
-              character.normalAttack.description,
+              character.elementalSkill.description.id,
+              character.elementalSkill.description,
               enka
             ).toString(),
-            icon: new ImageAssets(character.normalAttack.icon.name, enka).url,
-          },
-          elementalSkill: elementalSkill,
-          elementalBurst: elementalBurst,
-        };
+            // .text.replace(/<[^>]+>/g, ""),
+            icon: new ImageAssets(character.elementalSkill.icon.name, enka).url,
+            cooldown: character.elementalSkill.cooldown,
+            maxCharge: character.elementalSkill.maxCharge,
+          }
+        : "";
 
-        characterData = char
+      const elementalBurst = character.elementalBurst
+        ? {
+            name: new TextAssets(
+              character.elementalBurst.name.id,
+              enka
+            ).toString(),
+            description: new DynamicTextAssets(
+              character.elementalBurst.description.id,
+              character.elementalBurst.description,
+              enka
+            ).toString(),
+            icon: new ImageAssets(character.elementalBurst.icon.name, enka).url,
+            cooldown: character.elementalBurst.cooldown,
+            maxCharge: character.elementalBurst.maxCharge,
+          }
+        : "";
+
+      let char = {
+        id: character.id,
+        name: character.name.get("en"),
+        rarity: character.stars,
+        splashImage: character.splashImage.url,
+        charImage: character.icon.url,
+        birthday: character.details.birthday,
+        location: new TextAssets(
+          character.details.location.id,
+          enka
+        ).toString(),
+        vision: new TextAssets(character.details.vision.id, enka).toString(),
+        constellation: new TextAssets(
+          character.details.constellation.id,
+          enka
+        ).toString(),
+        constellationIcon: new ImageAssets(
+          character.details.constellationIcon.name,
+          enka
+        ).url,
+        title: new TextAssets(character.details.title.id, enka).toString(),
+        charDescription: new TextAssets(
+          character.details.description.id,
+          enka
+        ).toString(),
+        normalAttack: {
+          name: new TextAssets(character.normalAttack.name.id, enka).toString(),
+          description: new DynamicTextAssets(
+            character.normalAttack.description.id,
+            character.normalAttack.description,
+            enka
+          ).toString(),
+          icon: new ImageAssets(character.normalAttack.icon.name, enka).url,
+        },
+        elementalSkill: elementalSkill,
+        elementalBurst: elementalBurst,
+      };
+
+      characterData = char;
     }
 
     res.status(200).json(characterData);
